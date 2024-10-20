@@ -1,0 +1,140 @@
+#!/bin/lua
+local utils = require("utils")
+local Stack = require("stack")
+
+function Main()
+	-- Read filename from argument
+	local filename = arg[1]
+
+	--[[
+	Tokenize Program
+		]]
+	--
+	local program_lines = {}
+
+	local file_handler, err = io.open(filename, "rb")
+
+	if file_handler == nil then
+		print(err)
+		os.exit(1)
+	end
+
+	local file_line = file_handler:read("*l")
+
+	while file_line do
+		table.insert(program_lines, file_line)
+		file_line = file_handler:read("*l")
+	end
+
+	local program = {}
+	local token_counter = 1
+	local label_tracker = {}
+
+	for _, line in ipairs(program_lines) do
+		-- Ignore empty lines
+		if line == "" then
+			goto continue_program_line_reading
+		end
+
+		-- Ignore comments
+		if line:sub(1, 1) == "#" then
+			goto continue_program_line_reading
+		end
+
+		local parts = utils.split(line, " ")
+		local opcode = parts[1]
+
+		-- Check for empty line
+		if opcode == "" then
+			goto continue_program_line_reading
+		end
+
+		-- Store label postitions
+		if opcode:match(":$") then
+			label_tracker[opcode:sub(0, opcode:len() - 1)] = token_counter
+			goto continue_program_line_reading
+		end
+
+		table.insert(program, opcode)
+		token_counter = token_counter + 1
+
+		-- Handle opcodes
+		if opcode == "PUSH" then
+			local number = parts[2]
+			table.insert(program, number)
+			token_counter = token_counter + 1
+		elseif opcode == "PRINT" then
+			local string_literal = ""
+			for idx, part in ipairs(parts) do
+				if idx > 1 then
+					string_literal = string_literal .. " " .. part
+				end
+			end
+			table.insert(program, utils.join({ table.unpack(parts, 2) }, " "))
+			token_counter = token_counter + 1
+		elseif opcode == "JUMP.EQ.0" then
+			local label = parts[2]
+			table.insert(program, label)
+			token_counter = token_counter + 1
+		elseif opcode == "JUMP.GT.0" then
+			local label = parts[2]
+			table.insert(program, label)
+			token_counter = token_counter + 1
+		end
+
+		::continue_program_line_reading::
+	end
+
+	--[[
+	-- Interpret program
+	--]]
+
+	local pc = 1
+
+	while program[pc] ~= "HALT" do
+		local opcode = program[pc]
+		pc = pc + 1
+
+		if opcode == "PUSH" then
+			local number = program[pc]
+			pc = pc + 1
+
+			Stack:push(number)
+		elseif opcode == "POP" then
+			Stack:pop()
+		elseif opcode == "ADD" then
+			local a = Stack:pop()
+			local b = Stack:pop()
+			Stack:push(a + b)
+		elseif opcode == "SUB" then
+			local a = Stack:pop()
+			local b = Stack:pop()
+			Stack:push(b - a)
+		elseif opcode == "PRINT" then
+			local string_literal = program[pc]
+			pc = pc + 1
+			print(string_literal)
+		elseif opcode == "READ" then
+			local number = io.read("*n")
+			Stack:push(number)
+		elseif opcode == "JUMP.EQ.0" then
+			local number = Stack:top()
+
+			if number == 0 then
+				pc = label_tracker[program[pc]]
+			else
+				pc = pc + 1
+			end
+		elseif opcode == "JUMP.GT.0" then
+			local number = Stack:top()
+
+			if number > 0 then
+				pc = label_tracker[program[pc]]
+			else
+				pc = pc + 1
+			end
+		end
+	end
+end
+
+Main()
