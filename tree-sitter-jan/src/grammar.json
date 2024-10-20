@@ -1,0 +1,180 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "jan",
+  "rules": {
+    "source_file": {
+      "type": "REPEAT",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_definition"
+      }
+    },
+    "_definition": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "halt_definition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "label_definition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "comment_definition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "read_definition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "push_definition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "sub_definition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "print_definition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "jump_eq_0_definition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "jump_gt_0_definition"
+        }
+      ]
+    },
+    "halt_definition": {
+      "type": "STRING",
+      "value": "HALT"
+    },
+    "label_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "label_type"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        }
+      ]
+    },
+    "comment_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#"
+        },
+        {
+          "type": "PATTERN",
+          "value": ".*"
+        }
+      ]
+    },
+    "read_definition": {
+      "type": "STRING",
+      "value": "READ"
+    },
+    "push_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "PUSH"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "number_type"
+        }
+      ]
+    },
+    "sub_definition": {
+      "type": "STRING",
+      "value": "SUB"
+    },
+    "print_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "PRINT"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "text_type"
+        }
+      ]
+    },
+    "jump_eq_0_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "JUMP.EQ.0"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "label_type"
+        }
+      ]
+    },
+    "jump_gt_0_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "JUMP.GT.0"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "label_type"
+        }
+      ]
+    },
+    "number_type": {
+      "type": "PATTERN",
+      "value": "\\d+"
+    },
+    "label_type": {
+      "type": "PATTERN",
+      "value": "[A-Z0-9_]+"
+    },
+    "text_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "\""
+        },
+        {
+          "type": "PATTERN",
+          "value": "[a-zA-Z0-9 _-]+"
+        },
+        {
+          "type": "STRING",
+          "value": "\""
+        }
+      ]
+    }
+  },
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\s"
+    }
+  ],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": []
+}

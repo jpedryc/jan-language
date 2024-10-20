@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "node-addon-api": "^8.2.1",
+    "tree-sitter-cli": "^0.24.3"
+  },
+  "tree-sitter": [
+    {
+      "theme": {
+        "comment": "brown",
+        "keyword": "red",
+        "number": "blue",
+        "label": "purple",
+        "text": "yellow"
+      }
+    }
+  ]
+}
