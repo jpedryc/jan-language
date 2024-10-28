@@ -1,8 +1,8 @@
 ---@class Stack
 ---@field self.buf table
 ---@field self.sp number
-
 local Stack = {}
+
 local StackMeta = {}
 StackMeta.__index = Stack
 
