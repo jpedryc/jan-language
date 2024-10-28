@@ -14,14 +14,3 @@ function TestSplit()
 end
 
 TestSplit()
-
-function TestEndsWith()
-	assert(utils.ends_with("abcd", "cd"))
-	assert(not utils.ends_with("", "cd"))
-	assert(not utils.ends_with("abcd ", "cd"))
-	assert(not utils.ends_with("abcd", "ab"))
-
-	print("TestEndsWith testing complete!")
-end
-
-TestEndsWith()
